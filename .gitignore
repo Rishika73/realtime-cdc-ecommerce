@@ -1,0 +1,43 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+dbt/.venv/
+airflow/.venv/
+
+# dbt generated files
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+
+# Airflow runtime / local metadata
+airflow/airflow.db
+airflow/airflow.db-shm
+airflow/airflow.db-wal
+airflow/airflow.cfg
+airflow/logs/
+airflow/standalone_admin_password.txt
+airflow/simple_auth_manager_passwords.json.generated
+airflow/webserver_config.py
+airflow/__pycache__/
+
+# Spark / Iceberg runtime data
+iceberg/warehouse/
+spark-warehouse/
+
+# Local logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Environment / secrets
+.env
+*.env

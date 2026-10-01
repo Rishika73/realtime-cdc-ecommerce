@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: customer_order_summary
+    description: Customer-level order and payment summary built from current-state Iceberg tables.
+
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+      - name: total_orders
+        tests:
+          - not_null
+
+      - name: total_order_value
+        tests:
+          - not_null
+
+      - name: total_paid_amount
+        tests:
+          - not_null

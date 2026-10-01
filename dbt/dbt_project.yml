@@ -1,0 +1,15 @@
+name: realtime_cdc_ecommerce
+version: "1.0.0"
+
+profile: realtime_cdc_ecommerce
+
+model-paths:
+  - models
+
+clean-targets:
+  - target
+  - dbt_packages
+
+models:
+  realtime_cdc_ecommerce:
+    +materialized: table
