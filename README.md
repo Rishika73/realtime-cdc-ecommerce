@@ -2,6 +2,11 @@
 
 An end-to-end real-time data engineering project that captures transactional changes from PostgreSQL using Change Data Capture (CDC), streams them through Apache Kafka, processes them with Spark Structured Streaming, stores historical and current-state data in Apache Iceberg, validates data quality, builds analytics models with dbt, and orchestrates downstream workflows with Apache Airflow.
 
+## Architecture Diagram
+
+See the detailed architecture here:
+
+[View Architecture](docs/architecture.md)
 ## Architecture
 
 ```text
