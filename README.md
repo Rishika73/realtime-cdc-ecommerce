@@ -390,7 +390,11 @@ check_spark_thrift_server    success
 dbt_run                      success
 dbt_test                     success
 ```
+## Airflow Successful Run
 
+The downstream pipeline completed successfully in Apache Airflow, including current-state table builds, data quality checks, Spark Thrift validation, dbt model execution, and dbt tests.
+
+![Airflow Successful Run](docs/screenshots/airflow_success.png)
 ## Project Structure
 
 ```text
