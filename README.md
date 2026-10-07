@@ -177,6 +177,9 @@ All seven tasks completed successfully in the final DAG run.
 
 ```text
 realtime-cdc-ecommerce/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── airflow/
 │   └── dags/
 │       └── realtime_cdc_pipeline.py
@@ -190,6 +193,7 @@ realtime-cdc-ecommerce/
 ├── docs/
 │   ├── architecture.md
 │   └── screenshots/
+│       ├── Real-Time E-Commerce CDC Architecture.png
 │       └── airflow_success.png
 ├── postgres/
 │   └── init/
@@ -207,6 +211,7 @@ realtime-cdc-ecommerce/
 │       └── data_quality_checks.py
 ├── docker-compose.yml
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
