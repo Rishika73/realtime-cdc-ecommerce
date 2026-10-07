@@ -1,4 +1,5 @@
 # Real-Time CDC E-Commerce Data Platform
+[![CI](https://github.com/Rishika73/realtime-cdc-ecommerce/actions/workflows/ci.yml/badge.svg)](https://github.com/Rishika73/realtime-cdc-ecommerce/actions/workflows/ci.yml)
 
 A production-style real-time data platform that captures changes from PostgreSQL, streams them through Kafka, processes them with Spark Structured Streaming, and maintains both historical and current-state datasets in Apache Iceberg.
 
