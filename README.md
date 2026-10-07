@@ -39,8 +39,12 @@ Iceberg CDC History   Iceberg Current State
                v
             Airflow
 ```
+## Architecture
 
-[View the detailed architecture](docs/architecture.md)
+![Real-Time CDC E-Commerce Data Platform Architecture](docs/screenshots/Real-Time%20E-Commerce%20CDC%20Architecture.png)
+
+[View the detailed Mermaid architecture](docs/architecture.md)
+
 
 ---
 
