@@ -6,7 +6,7 @@ The project also includes automated data-quality validation, dbt analytics model
 
 ---
 
-## Architecture
+
 
 
 ## Architecture
