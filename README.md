@@ -8,37 +8,7 @@ The project also includes automated data-quality validation, dbt analytics model
 
 ## Architecture
 
-```text
-PostgreSQL
-    |
-    v
-Debezium CDC
-    |
-    v
-Apache Kafka
-    |
-    v
-Spark Structured Streaming
-    |
-    +----------------------+
-    |                      |
-    v                      v
-Iceberg CDC History   Iceberg Current State
-    |                      |
-    +----------+-----------+
-               |
-               v
-       Data Quality Checks
-               |
-               v
-              dbt
-               |
-               v
-      Customer Analytics
-               |
-               v
-            Airflow
-```
+
 ## Architecture
 
 ![Real-Time CDC E-Commerce Data Platform Architecture](docs/screenshots/Real-Time%20E-Commerce%20CDC%20Architecture.png)
