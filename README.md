@@ -1,10 +1,12 @@
 # Real-Time CDC E-Commerce Data Platform
 
-An end-to-end real-time data engineering project that captures PostgreSQL changes using Debezium CDC, streams them through Kafka, processes them with Spark Structured Streaming, stores historical and current-state data in Apache Iceberg, validates data quality, builds analytics with dbt, and orchestrates the workflow with Airflow.
+A production-style real-time data platform that captures changes from PostgreSQL, streams them through Kafka, processes them with Spark Structured Streaming, and maintains both historical and current-state datasets in Apache Iceberg.
+
+The project also includes automated data-quality validation, dbt analytics models, and Airflow orchestration for an end-to-end data engineering workflow.
+
+---
 
 ## Architecture
-
-[View detailed architecture](docs/architecture.md)
 
 ```text
 PostgreSQL
@@ -38,38 +40,57 @@ Iceberg CDC History   Iceberg Current State
             Airflow
 ```
 
-## Tech Stack
+[View the detailed architecture](docs/architecture.md)
 
-- PostgreSQL
-- Debezium
-- Apache Kafka
-- Apache Spark 4.1
-- Spark Structured Streaming
-- Apache Iceberg
-- dbt
-- Apache Airflow
-- Docker / Docker Compose
-- Python
-- SQL
+---
 
-## Key Features
+## What This Project Demonstrates
 
-- PostgreSQL logical replication with Debezium CDC
-- Kafka topics for customers, orders, payments, products, and order items
-- Spark Structured Streaming consumers
-- CDC support for `r`, `c`, `u`, and `d` operations
-- Delete-aware processing using Debezium `before` and `after` payloads
-- Append-only Iceberg CDC history tables
-- Current-state tables built with Iceberg `MERGE`
-- PostgreSQL `NUMERIC` / Kafka Connect Decimal decoding
-- Referential-integrity and data-quality validation
-- dbt analytics models and tests
+- Change Data Capture from PostgreSQL using Debezium
+- Event-driven ingestion with Apache Kafka
+- Real-time processing with Spark Structured Streaming
+- Append-only CDC history in Apache Iceberg
+- Current-state tables using Iceberg `MERGE`
+- Insert, update, and delete event handling
+- Automated data-quality validation
+- dbt transformations and tests
 - Airflow orchestration
 - Dockerized local infrastructure
 
-## Data Model
+---
+
+## Tech Stack
+
+### Streaming & CDC
+- Apache Kafka
+- Debezium
+- Spark Structured Streaming
+
+### Storage & Modeling
+- Apache Iceberg
+- PostgreSQL
+- dbt
+
+### Orchestration & Infrastructure
+- Apache Airflow
+- Docker
+- Docker Compose
+
+### Languages
+- Python
+- SQL
+
+---
+
+## Data Flow
+
+Changes made in PostgreSQL are captured through Debezium and published to Kafka topics.
+
+Spark Structured Streaming consumes those events and writes them into two forms:
 
 ### CDC History Tables
+
+These tables preserve the full sequence of change events.
 
 ```text
 local.ecommerce.customer_cdc
@@ -79,17 +100,21 @@ local.ecommerce.payments_cdc
 
 ### Current-State Tables
 
+These tables represent the latest active version of each entity using Iceberg `MERGE`.
+
 ```text
 local.ecommerce.customers_current
 local.ecommerce.orders_current
 local.ecommerce.payments_current
 ```
 
-CDC history preserves every event, while current-state tables contain only the latest active record for each entity.
+This design supports both historical event analysis and current-state analytics from the same pipeline.
+
+---
 
 ## Data Quality
 
-The Spark validation job checks:
+The validation layer checks:
 
 - Unique customer, order, and payment IDs
 - Non-null customer IDs
@@ -98,7 +123,7 @@ The Spark validation job checks:
 - Valid customer references on orders
 - Valid order references on payments
 
-Result:
+Example result:
 
 ```text
 PASS: unique_customer_ids
@@ -113,23 +138,13 @@ PASS: valid_payment_orders
 All data quality checks passed.
 ```
 
-## dbt Analytics
+---
 
-The dbt model:
+## Analytics Layer
 
-```text
-customer_order_summary
-```
+The dbt model `customer_order_summary` combines current-state customer, order, and payment data into an analytics-ready dataset.
 
-combines:
-
-```text
-customers_current
-orders_current
-payments_current
-```
-
-to produce:
+It produces:
 
 - Total orders
 - Total order value
@@ -146,7 +161,7 @@ Example output:
 | Liam Garcia | Denver | AZ | 1 | 59.99 | 59.99 |
 | Emma Brown | Miami | MA | 1 | 134.98 | 134.98 |
 
-## dbt Tests
+dbt test result:
 
 ```text
 PASS=5
@@ -156,15 +171,11 @@ SKIP=0
 TOTAL=5
 ```
 
-Tests cover:
-
-- `customer_id` not null
-- `customer_id` unique
-- `total_orders` not null
-- `total_order_value` not null
-- `total_paid_amount` not null
+---
 
 ## Airflow Orchestration
+
+The pipeline is coordinated through Airflow:
 
 ```text
 build_customers_current ─┐
@@ -183,9 +194,9 @@ build_payments_current ──┘
 
 All seven tasks completed successfully in the final DAG run.
 
-## Airflow Successful Run
-
 ![Airflow Successful Run](docs/screenshots/airflow_success.png)
+
+---
 
 ## Project Structure
 
@@ -224,15 +235,17 @@ realtime-cdc-ecommerce/
 └── README.md
 ```
 
-## Run the Project
+---
 
-Start the infrastructure:
+## Running the Project
+
+### 1. Start the Infrastructure
 
 ```bash
 docker compose up -d
 ```
 
-Register the Debezium connector:
+### 2. Register the Debezium Connector
 
 ```bash
 curl -X POST \
@@ -241,7 +254,7 @@ curl -X POST \
   http://localhost:8083/connectors
 ```
 
-Run a CDC streaming job:
+### 3. Run a CDC Streaming Job
 
 ```bash
 docker exec -it ecommerce-spark /opt/spark/bin/spark-submit \
@@ -250,7 +263,7 @@ docker exec -it ecommerce-spark /opt/spark/bin/spark-submit \
   /opt/spark/jobs/customer_cdc_to_iceberg.py
 ```
 
-Run dbt:
+### 4. Run dbt
 
 ```bash
 ./dbt/.venv/bin/dbt run \
@@ -258,7 +271,7 @@ Run dbt:
   --select customer_order_summary
 ```
 
-Run dbt tests:
+### 5. Run dbt Tests
 
 ```bash
 ./dbt/.venv/bin/dbt test \
@@ -266,49 +279,55 @@ Run dbt tests:
   --select customer_order_summary
 ```
 
-Run Airflow:
+### 6. Start Airflow
 
 ```bash
 export AIRFLOW_HOME="$PWD/airflow"
 ./airflow/.venv/bin/airflow standalone
 ```
 
-Trigger the DAG:
+### 7. Trigger the DAG
 
 ```bash
 ./airflow/.venv/bin/airflow dags trigger realtime_cdc_ecommerce_pipeline
 ```
 
+---
+
 ## Engineering Highlights
 
-This project demonstrates:
+This project covers several production-oriented data engineering patterns:
 
 - Change Data Capture
 - Event-driven data pipelines
 - Kafka-based streaming
 - Spark Structured Streaming
 - Apache Iceberg
-- CDC history and current-state modeling
+- Historical and current-state modeling
 - Upserts and deletes with `MERGE`
 - Decimal decoding
-- Data quality validation
+- Data-quality validation
 - dbt analytics engineering
 - Workflow orchestration with Airflow
 - Dockerized data infrastructure
 
+---
+
 ## Project Status
 
-✅ PostgreSQL CDC  
-✅ Debezium  
-✅ Kafka  
-✅ Spark Structured Streaming  
-✅ Apache Iceberg  
-✅ CDC history  
-✅ Current-state MERGE processing  
-✅ Delete handling  
-✅ Decimal decoding  
-✅ Data quality validation  
-✅ dbt analytics  
-✅ dbt tests  
-✅ Airflow orchestration  
-✅ End-to-end successful DAG execution
+The full pipeline is complete and working across:
+
+- PostgreSQL CDC
+- Debezium
+- Kafka
+- Spark Structured Streaming
+- Apache Iceberg
+- CDC history
+- Current-state `MERGE` processing
+- Delete handling
+- Decimal decoding
+- Data-quality validation
+- dbt analytics
+- dbt tests
+- Airflow orchestration
+- End-to-end successful DAG execution
