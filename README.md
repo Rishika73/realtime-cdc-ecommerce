@@ -311,3 +311,11 @@ The full pipeline is complete and working across:
 - dbt tests
 - Airflow orchestration
 - End-to-end successful DAG execution
+
+## Trade-offs
+
+- The pipeline keeps both append-only CDC history tables and current-state tables built with Iceberg `MERGE`. This supports historical event analysis and current-state analytics from the same pipeline, at the cost of storing and maintaining two representations of the data.
+- Change data capture with Debezium and Kafka gives near-real-time updates, but adds moving parts (connector management, topic configuration, and stream processing) compared with a simpler batch extract-and-load approach.
+- Spark Structured Streaming processes events in micro-batches, so end-to-end latency depends on the trigger cadence and available compute rather than being strictly event-by-event.
+- The whole stack runs locally through Docker Compose, which makes the project reproducible, but a larger deployment would need managed services, schema evolution handling, monitoring, and alerting instead of manual steps.
+- Data-quality validation runs inside the Airflow DAG after the current-state builds, so it gates downstream readiness but does not prevent invalid events from reaching the append-only history tables.
